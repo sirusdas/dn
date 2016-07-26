@@ -129,9 +129,9 @@ class NETRACustomerInit extends NCMCore {
 	 */
 	public static function admin_menu() {
 		$lowest_role = self::$config->get('permissions_lowest_role');
-		add_menu_page(self::__('Purchase'), self::__('Purchase'), $lowest_role, self::MENU, array(__CLASS__, 'instructions'), self::$url . '/images/admin-menu-icon.png');
-		self::add_submenu('Purchase Details', $lowest_role);
-                self::add_submenu('Purchase Reports', $lowest_role);
+		add_menu_page(self::__('Purchase'), self::__('Purchase'), $lowest_role, self::MENU, array(__CLASS__, 'admin_purchase_details'), self::$url . '/images/admin-menu-icon.png');
+		//self::add_submenu('Purchase Details', $lowest_role);
+        self::add_submenu('Purchase Reports', $lowest_role);
 		self::add_submenu('Edit Type');
 		self::add_submenu('Edit Labels');
 		self::add_submenu('Edit Display');
@@ -209,7 +209,7 @@ jQuery(function($) {
 	}
 
 	public static function admin_purchase_details() {
-		self::admin_call("manage_customer_details");
+		self::admin_call("purchase");
 	}
 
 	public static function admin_purchase_reports() {
@@ -271,7 +271,7 @@ jQuery(function($) {
 	public static function admin_enqueue_scripts() {
 		$page = (isset($_GET["page"])) ? $_GET["page"] : '';
 
-		if (in_array($page, self::$pages)) {
+		if (in_array($page, self::$pages) || $page == 'purchase') {
 			wp_enqueue_script('jquery');
 			wp_enqueue_script('jquery-ui-core');
 			wp_enqueue_script('jquery-ui-sortable');

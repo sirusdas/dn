@@ -100,7 +100,7 @@ final class NCMAdmin extends NCMCore {
 		}
 
 		// Do our display here
-		self::admin_heading( self::__( 'Manage Customer Details' ) );
+		self::admin_heading( self::__( 'Purchase Details' ) );
 
 		if ( $action == 'edit' || $action == 'add' ) {
 			self::edit_item( $inventory_id );
@@ -110,6 +110,42 @@ final class NCMAdmin extends NCMCore {
 			self::list_items();
 		}
 
+		self::admin_footer();
+	}
+	//my code
+	
+	public static function purchase() {
+	
+		self::$self_url = 'admin.php?page=' . __FUNCTION__;
+	
+		$action       = self::get_action();
+		$inventory_id = self::request( "inventory_id" );
+	
+		// Do our work here
+		if ( $action == 'save' ) {
+			if ( self::save_item() ) {
+				$action        = '';
+				self::$message = self::__( 'Purchase Items' ) . ' ' . self::__( 'saved successfully.' );
+			} else {
+				$action = 'edit';
+			}
+		} else if ( $action == 'delete' ) {
+			$inventory_id = self::request( 'delete_id' );
+			$success      = self::delete_item( $inventory_id );
+			$action       = '';
+		}
+	
+		// Do our display here
+		self::admin_heading( self::__( 'Manage Customer Details' ) );
+	
+		if ( $action == 'edit' || $action == 'add' ) {
+			self::edit_item( $inventory_id );
+		}
+	
+		if ( ! $action ) {
+			self::list_items();
+		}
+	
 		self::admin_footer();
 	}
         
@@ -195,7 +231,7 @@ final class NCMAdmin extends NCMCore {
 		?>
 		<?php if ( self::check_permission( 'add_item', FALSE ) ) { ?>
 			<a class="button button-primary"
-			   href="<?php echo self::$self_url; ?>&action=add"><?php self::_e( 'Add Inventory Item' ); ?></a>
+			   href="<?php echo self::$self_url; ?>&action=add"><?php self::_e( 'Add Products' ); ?></a>
 		<?php } ?>
 		<table class="grid itemgrid">
 			<?php echo self::grid_columns( $columns, self::$self_url, 'inventory_number' );
