@@ -1,0 +1,144 @@
+Its a long process so please follow the necessary steps:
+
+1) Files need to be edited:
+   wpinventory.admin.class
+   wpinventory.class
+   wpinventory.functions
+   wpinventory.item.class
+
+wpinventory.admin.class ->
+
+Find this... 		$filters = array(
+			"inventory_search"      => "search",
+                        "inventory_search1"      => "search1",
+                        "inventory_search2"      => "search2",
+			"inventory_sort_by"     => "order",
+			"inventory_category_id" => "category_id",
+			"inventory_page"        => "page"
+		);
+
+wpinventory.class ->
+
+	protected static $filters = array(
+		"inventory_search"      => "search",
+                "inventory_search1"     => "search1",
+		"inventory_search2"      => "search2",
+		"inventory_sort_by"     => "order",
+		"inventory_category_id" => "category_id",
+		"inventory_page"        => "page"
+	);
+
+wpinventory.functions ->
+
+function wpinventory_get_filter_reports_criteria( $args = array() ) {
+	$WPIMLoop = wpinventory_get_wpim();
+
+	$query_args = $WPIMLoop->get_query_args();
+
+	if ( ! empty( $args ) && is_string( $args ) && stripos( $args, "&" ) != FALSE ) {
+		$args = explode( '&', $args );
+	}
+
+	// Override.  If the shortcode contains a category id, do not show
+	if ( ! empty( $query_args['category_id'] ) && ! WPIMCore::request( 'inventory_category_id' ) ) {
+		$args['categories'] = FALSE;
+	}
+
+	$default = array(
+		"search"       => TRUE,
+		"sort"         => FALSE,
+		"sort_label"   => $WPIMLoop->__( "Sort By" ),
+		"categories"   => TRUE,
+		"button"       => $WPIMLoop->__( "Search" ),
+		"search_label" => $WPIMLoop->__( "Search For" ),
+		"caller"       => ""
+	);
+
+	$args = wp_parse_args( $args, $default );
+
+	if ( empty( $query_args['sort_by'] ) ) {
+		$query_args['sort_by'] = 'inventory_name';
+	}
+
+        $args['inventory_search1']      = $WPIMLoop->request( "inventory_search1" );
+        $args['inventory_search2'] =       $WPIMLoop->request( "inventory_search2" );
+
+	return $args;
+}
+
+
+function wpinventory_filter_form_reports( $args = NULL ) {
+
+	global $post;
+	$WPIMLoop = wpinventory_get_wpim();
+
+	$args = wpinventory_get_filter_reports_criteria();
+	extract($args);
+
+	$form = '';
+
+	if ( $search ) {
+        	$form .= '<span class="search">' . PHP_EOL;
+		$form .= '<label for="inventory_search"> From Date: </label>';
+		$form .= '<input type="text" class="MyDate" name="inventory_search2" value="' . $inventory_search2 . '" />';
+                $form .= '</span>' . PHP_EOL;
+                
+                $form .= '<span class="search">' . PHP_EOL;
+		$form .= '<label for="inventory_search"> To Date: </label>';                
+		$form .= '<input type="text" class="MyDate" name="inventory_search1" value="' . $inventory_search1 . '" />';                
+		$form.= '</span>' . PHP_EOL;  
+	}
+
+	$url = ( empty( $post ) ) ? 'admin.php?page=' . $_GET['page'] : get_permalink( $post->ID );
+
+	if ( $form ) {
+		$form .= '<input type="submit" name="inventory_filter" value="' . $WPIMLoop->__( 'Go' ) . '" />' . PHP_EOL;
+		$form = '<form class="wpinventory_filter" name="wpinventory_filter" method="post" id="inventory_search" action="' . $url . '#inventory_filter">' . PHP_EOL . $form . '</form>' . PHP_EOL;
+	}
+
+	return $form;
+}
+
+
+   wpinventory.item.class
+
+                if ($search1||$search2) {
+                               // echo "<script type='text/javascript'>alert('Search1  is called');</script>";
+			$where = $this->append_where($where, $this->parse_date_search($search2,$search1));
+		}  
+
+                //my code for searching by dates////////////////////////////////////////////////////////search by date///////////////////////////////////////////////////////////
+	public function parse_date_search($search_from,$search1) {
+           // echo "<script type='text/javascript'>alert('Search by date From= ".$search_from." to ".$search1. "');</script>";
+		$fields = $this->get_date_searchable_fields();
+		$where = '';
+		foreach($fields AS $field) {
+			if ($where) {
+				$where.= ' OR';
+			}
+			$where.= ' inventory_date_updated between "'.$search_from.' 00:00:00.000" and "'.$search1.' 23:59:59.999"' ;
+		}
+		return '(' . $where . ')';
+	}
+        
+        public static function get_date_searchable_fields() {
+		$no_search = array(
+			'inventory_id',
+			'inventory_slug',
+			'inventory_sort_order',
+			'category_id',
+			'user_id',
+		);
+		
+		$fields = self::get_fields();
+		
+		foreach($fields AS $key=>$field) {
+			if (in_array($field, $no_search)) {
+				unset($fields[$key]);
+			}
+		}
+		
+		return $fields;
+	}
+	/////////////////////////////////////////////////////////////mycode ends///////////////////////////////search by date ends///////////////////////////////////////////        
+	        

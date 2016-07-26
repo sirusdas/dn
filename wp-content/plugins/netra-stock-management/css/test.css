@@ -1,0 +1,52 @@
+	#spec_bill{
+		width: 630px;
+		border: 1px solid black;
+		padding: 0px 10px;
+	}
+	td{
+		//text-decoration:underline;
+		border-bottom: 1px solid #1b1b1b;
+	}
+	table{
+		margin-bottom:15px;
+		width:100%;
+	}
+	table, th, td{
+		//border: 1px solid black;
+		padding:5px;
+	}
+	table.spec_bill2{
+		border-collapse: collapse;
+	}
+	.shop_address{
+		width:100%;
+		border-bottom: 1px solid;
+	}
+	.shop_address .wrapper{
+		width:80%;
+		margin:0 auto;
+	}
+	
+	.shop_address .wrapper .shop_name{
+		width:80%;display:inline-block;
+	}
+	.shop_name h2,
+	.shop_name h3{
+		text-align:center;
+	}
+	.shop_logo{
+		width:20%;
+		height:88px;
+		background:red;
+		float: right;
+		margin-top: 10px;
+		display:inline-block;
+	}
+	#cust_receipt{
+		width: 496px;
+		border: 1px solid black;
+		padding: 0px 10px;
+	}
+	#cust_receipt p{
+		text-align: center;
+	}
