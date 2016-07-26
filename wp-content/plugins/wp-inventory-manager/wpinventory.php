@@ -149,7 +149,7 @@ class WPInventoryInit extends WPIMCore {
 		$lowest_role = self::$config->get('permissions_lowest_role');
 		add_menu_page(self::__('Orders'), self::__('Add Orders'), $lowest_role, self::MENU, array(__CLASS__, 'manage_inventory_items'), self::$url . '/images/admin-menu-icon.png');
 		//self::add_submenu('Add Order', $lowest_role);
-                self::add_submenu('Order Reports', $lowest_role);
+        self::add_submenu('Order Reports', $lowest_role);
 		self::add_submenu('Categories');
 		self::add_submenu('Labels');
 		self::add_submenu('Display');
@@ -189,7 +189,8 @@ class WPInventoryInit extends WPIMCore {
 		}
 		
 		add_submenu_page(self::MENU, $title, $title, $role, 'manage_' . $slug, array(__CLASS__, 'admin_' . $slug));
-		self::$pages[] = 'manage_' . $slug;
+		//self::$pages[] = 'manage_' . $slug; 
+		self::$pages[] = $slug;//modified
 	}
 
 	public static function admin_print_footer_scripts() {
@@ -227,7 +228,7 @@ jQuery(function($) {
 	}
         
 	public static function manage_inventory_items() {
-		self::admin_call("manage_inventory_items");
+		self::admin_call("orders");
 	}        
 
 	public static function admin_add_order() {
@@ -292,8 +293,7 @@ jQuery(function($) {
 	 */
 	public static function admin_enqueue_scripts() {
 		$page = (isset($_GET["page"])) ? $_GET["page"] : '';
-
-		if (in_array($page, self::$pages)) {
+		if (in_array($page, self::$pages) || $page == "orders") {
 			wp_enqueue_script('jquery');
 			wp_enqueue_script('jquery-ui-core');
 			wp_enqueue_script('jquery-ui-sortable');
@@ -310,8 +310,8 @@ jQuery(function($) {
 			}
 				
 			wp_register_script('wpinventory-admin', self::$url . '/js/wpinventory-admin.js');
-                        wp_register_script('wpinventory-ui', self::$url . '/js/wpjquery-ui.js');
-                        wp_register_script('wpnetra', self::$url . '/js/wpnetra.js');
+            wp_register_script('wpinventory-ui', self::$url . '/js/wpjquery-ui.js');
+            wp_register_script('wpnetra-orders', self::$url . '/js/wpnetra-orders.js');
 			wp_localize_script('wpinventory-admin', 'wpinventory', array(
 					'pluginUrl'		=> self::$url,
 					'ajaxUrl'		=> admin_url('admin-ajax.php'),
@@ -329,7 +329,7 @@ jQuery(function($) {
 			wp_enqueue_script('wpinventory-admin');
                         wp_enqueue_script('wpinventory-ui');
                         //my code
-                        wp_enqueue_script('wpnetra');
+                        wp_enqueue_script('wpnetra-orders');
 			wp_enqueue_style('wpinventory', self::$url . '/css/style-admin.css');
                         // my code adding the jquery ui css
 //        wp_enqueue_style('jquery-style', get_template_directory_uri() . '/css/jquery-ui.css');
@@ -338,6 +338,7 @@ jQuery(function($) {
         // and the script following it
         wp_enqueue_script('jquery-ui-datepicker');
 		}
+		
 	}
 	
 	/**
@@ -380,7 +381,6 @@ jQuery(function($) {
 add_action('plugins_loaded', array('WPInventoryInit', 'initialize'));
 
 function load_custom_wp_admin_style() {
-    
         wp_register_script('wp-common', get_template_directory_uri() . '/js/wpnetra.js', array('jquery'),'1.0', TRUE);
         wp_enqueue_script('wp-common');
 }

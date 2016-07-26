@@ -79,8 +79,8 @@ define('WP_DEBUG', false);
  *
 */
 
-define('WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST'] . '/DevChakraNetra');
-define('WP_HOME', 'http://' . $_SERVER['HTTP_HOST'] . '/DevChakraNetra');
+define('WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST'] . '/dn');
+define('WP_HOME', 'http://' . $_SERVER['HTTP_HOST'] . '/dn');
 
 
 /** Absolute path to the WordPress directory. */

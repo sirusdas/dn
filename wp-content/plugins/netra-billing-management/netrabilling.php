@@ -136,7 +136,7 @@ class NETRABillingInit extends NBMCore {
 	public static function admin_init() {
 		register_setting(self::SETTINGS_GROUP, self::SETTINGS);
 		self::$options = get_option(self::SETTINGS);
-		wp_enqueue_style('inventory-admin-style', self::$url . '/css/style-admin.css');
+		//wp_enqueue_style('inventory-admin-style', self::$url . '/css/style-admin.css');
 	}
 
 	/**

@@ -102,6 +102,7 @@ final class WPIMAdmin extends WPIMCore {
 			$inventory_id = self::request( 'delete_id' );
 			$success      = self::delete_item( $inventory_id );
 			$action       = '';
+			wp_enqueue_style('wpinventory', self::$url . '/css/style-admin.css');
 		}
 
 		// Do our display here
@@ -117,7 +118,44 @@ final class WPIMAdmin extends WPIMCore {
 
 		self::admin_footer();
 	}
-        
+      
+	//trying something here
+	public static function orders() {
+	
+		self::$self_url = 'admin.php?page=' . __FUNCTION__;
+	
+		$action       = self::get_action();
+		$inventory_id = self::request( "inventory_id" );
+	
+		// Do our work here
+		if ( $action == 'save' ) {
+			if ( self::save_item() ) {
+				$action        = '';
+				self::$message = self::__( 'Inventory Item' ) . ' ' . self::__( 'saved successfully.' );
+			} else {
+				$action = 'edit';
+			}
+		} else if ( $action == 'delete' ) {
+			$inventory_id = self::request( 'delete_id' );
+			$success      = self::delete_item( $inventory_id );
+			$action       = '';
+		}
+	
+		// Do our display here
+		self::admin_heading( self::__( 'Manage Orders' ) );
+	
+		if ( $action == 'edit' || $action == 'add' ) {
+			self::edit_item( $inventory_id );
+		}
+	
+		if ( ! $action ) {
+			self::list_items();
+		}
+	
+		self::admin_footer();
+	}
+	
+	
 	public static function manage_inventory_reports() {
 
 		self::$self_url = 'admin.php?page=' . __FUNCTION__;
