@@ -148,7 +148,9 @@ class WPInventoryInit extends WPIMCore {
 	public static function admin_menu() {
 		$lowest_role = self::$config->get('permissions_lowest_role');
 		add_menu_page(self::__('Orders'), self::__('Orders'), $lowest_role, self::MENU, array(__CLASS__, 'manage_inventory_items'), self::$url . '/images/admin-menu-icon.png');
-		//self::add_submenu('Add Order', $lowest_role);
+	  if(self::checkRole() == true){
+		self::add_submenu('Store');
+	  }
         self::add_submenu('Order Reports', $lowest_role);
 		self::add_submenu('Categories');
 		self::add_submenu('Labels');
@@ -165,8 +167,8 @@ class WPInventoryInit extends WPIMCore {
 	private static function add_submenu($title, $role = 'manage_options') {
 		$slug = strtolower(str_replace(" ", "_", $title));
 		switch(strtolower($title)) {
-			case 'add order':
-				$title = self::__('Add Order');
+			case 'store':
+				$title = self::__('Store');
 				break;
 			case 'order reports':
 				$title = self::__('Order Reports');
@@ -224,6 +226,10 @@ jQuery(function($) {
 
 	public static function instructions() {
 		self::admin_call("instructions");
+	}
+	
+	public static function admin_store() {
+		self::admin_call("all_store");
 	}
         
 	public static function manage_inventory_items() {

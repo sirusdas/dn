@@ -182,13 +182,9 @@ class WPIMItem extends WPIMDB {
 		if ($fields) {
 			$fields = ', ' . $fields;
 		}
-                
-                //my code
-                global $current_user;
-                global $wpdb;
-                
-                $sirus=$current_user->user_login;
-                $gid = $wpdb->get_var( "SELECT gid FROM $wpdb->users where user_login='$sirus'" );
+            
+                $gid = self::getGID();
+
                 $where = $this->append_where($where, $this->wpdb->prepare(' i.gid = %d', $gid));
 		////////////////////////////////////////////////my code ends/////////////////////////////////////////////////////////////////////////
 		
@@ -326,10 +322,7 @@ class WPIMItem extends WPIMDB {
 		return $this->parseRowFromDb($this->wpdb->get_row($this->wpdb->prepare('SELECT * FROM ' . $this->inventory_table . ' WHERE inventory_id = %d', $inventory_id)));
 	}
         	public function getf($order_no) {
-                global $current_user;
-                global $wpdb;
-                $sirus=$current_user->user_login;
-                $gid = $wpdb->get_var( "SELECT gid FROM $wpdb->users where user_login='$sirus'" );
+				$gid = self::getGID();
                 
 		//return $this->parseFromDb($this->wpdb->get_results($this->wpdb->prepare('SELECT * FROM ' . $this->frame_table . ' WHERE order_no= %d', $order_no . ' AND gid = %d', $gid)));
 	
@@ -339,10 +332,7 @@ class WPIMItem extends WPIMDB {
                         return $output;
                 }
         	public function getl($order_no) {
-                global $current_user;
-                global $wpdb;
-                    $sirus=$current_user->user_login;
-                $gid = $wpdb->get_var( "SELECT gid FROM $wpdb->users where user_login='$sirus'" );
+						$gid = self::getGID();
                     //$output = "<script>console.log( 'Order ID inside getl: " . $order_no . "' );</script>";
                       //  echo $output;
                         $output=$this->wpdb->get_results($this->wpdb->prepare('SELECT * FROM ' . $this->lens_table . ' WHERE order_no = %d', $order_no . ' AND gid = %d', $gid));
@@ -351,10 +341,7 @@ class WPIMItem extends WPIMDB {
 	}
         
         public function geto() {
-                global $current_user;
-                global $wpdb;
-                    $sirus=$current_user->user_login;
-                $gid = $wpdb->get_var( "SELECT gid FROM $wpdb->users where user_login='$sirus'" );
+						$gid = self::getGID();
                     //$output = "<script>console.log( 'Order ID inside getl: " . $order_no . "' );</script>";
                       //  echo $output;
                         $output=$this->wpdb->get_var($this->wpdb->prepare('SELECT MAX(order_no) FROM ' . $this->inventory_table . ' where gid = %d', $gid));

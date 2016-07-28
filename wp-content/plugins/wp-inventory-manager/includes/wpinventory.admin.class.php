@@ -154,16 +154,28 @@ final class WPIMAdmin extends WPIMCore {
 		self::admin_footer();
 	}
 	
-	public static function getRole(){
-		//return self::$config->get('permissions_lowest_role');
-		return current_user_can( 'manage_options' );
+	public static function all_store() {
+	
+		self::$self_url = 'admin.php?page=' . __FUNCTION__;
+	
+	
+		// Do our display here
+		self::admin_heading( self::__( "Store's" ) );
+	
+
+			self::list_stores();
+
+		
+	
+		self::admin_footer();
 	}
+	
 	
 	
 	public static function manage_inventory_reports() {
 		
  		
-       if(self::getRole()==true){
+       if(self::checkRole()==true){
 		
 			self::$self_url = 'admin.php?page=' . __FUNCTION__;
 	
@@ -202,7 +214,30 @@ final class WPIMAdmin extends WPIMCore {
        else{
        	      echo "This page is not available";   
            }
-	}        
+	}   
+	
+	/**
+	 * View for displaying the Stores in the admin dashboard.
+	 */
+	
+	public static function list_stores() {
+		
+		//echo '<a href ="'. $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] .'&data=2">Submit</a>';
+			
+ 		$gids = self::getGIDs();
+		
+		foreach ($gids as $gid){
+			//echo '<a href ="'. $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] .'&data='. $gid->gid . '"> Store ' . $gid->gid . '</a> <br>';
+			echo '<a onclick = "setView('. $gid->gid .')" > Store ' . $gid->gid . '</a> <br>';
+		}
+		
+		if($_REQUEST['view']!=""){
+			$_SESSION["view"] = $_REQUEST['view'];
+			echo 'Current Store = Store ' . $_SESSION["view"];
+		}
+		//die("Server received '{$_REQUEST['data']}' from your browser.");
+	}
+	
 
 
 	/**
@@ -2623,13 +2658,13 @@ final class WPIMAdmin extends WPIMCore {
 	 * @return bool
 	 */
 	
-	public static function getGID(){
+/* 	public static function getGID(){
 		global $current_user;
 		global $wpdb;
 		$sirus=$current_user->user_login;
 		$gid = $wpdb->get_var( "SELECT gid FROM $wpdb->users where user_login='$sirus'" );
 		return $gid;
-	}
+	} */
 	
 	public static function save_item() {
 
@@ -2663,7 +2698,7 @@ final class WPIMAdmin extends WPIMCore {
 */
 		if ( ! self::$error ) {
 			
-                $gid = self::getGID(); 
+                $gid = self::getGID();
               // $message = "Frame model " . $f_model[0];
               //  echo "<script type='text/javascript'>alert('$message');</script>";
 			$data = array(

@@ -89,6 +89,47 @@ abstract class WPIMCore {
 
 		add_action( 'admin_notices', array( __CLASS__, 'admin_notices' ) );
 	}
+	
+	
+	public static function getOWNERID(){
+		global $current_user;
+		global $wpdb;
+		$sirus=$current_user->user_login;
+		$owner = $wpdb->get_var( "SELECT owner_id FROM $wpdb->users where user_login='$sirus'" );
+		return $owner;
+	}
+	
+	public static function getGID(){
+		$owner_id = self::getOWNERID();
+		if($owner_id != 0){
+			
+			$gid = $_SESSION["view"];
+			
+			return $gid;
+		}
+		else{
+			global $current_user;
+			global $wpdb;
+			$sirus=$current_user->user_login;
+			$gid = $wpdb->get_var( "SELECT gid FROM $wpdb->users where user_login='$sirus'" );
+			return $gid;
+		}
+	}
+	
+	public static function getGIDs(){
+		$owner_id = self::getOWNERID();
+		if($owner_id != 0){
+			global $wpdb;
+			$sirus = $owner_id;
+			$gids = $wpdb->get_results( "SELECT gid FROM $wpdb->users where owner_id='$sirus'" );
+			return $gids;
+		}
+	}
+	
+	public static function checkRole(){
+		//return self::$config->get('permissions_lowest_role');
+		return current_user_can( 'manage_options' );
+	}
 
 	private function __clone() {
 	}
