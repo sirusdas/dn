@@ -12,8 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class WPIMAdmin extends WPIMCore {
       
-
-
+    private static $congif;
 
     private static $instance;
 
@@ -155,40 +154,54 @@ final class WPIMAdmin extends WPIMCore {
 		self::admin_footer();
 	}
 	
+	public static function getRole(){
+		//return self::$config->get('permissions_lowest_role');
+		return current_user_can( 'manage_options' );
+	}
+	
 	
 	public static function manage_inventory_reports() {
-
-		self::$self_url = 'admin.php?page=' . __FUNCTION__;
-
-		$action       = self::get_action();
-		$inventory_id = self::request( "inventory_id" );
-
-		// Do our work here
-		if ( $action == 'save' ) {
-			if ( self::save_item() ) {
-				$action        = '';
-				self::$message = self::__( 'Inventory Item' ) . ' ' . self::__( 'saved successfully.' );
-			} else {
-				$action = 'edit';
+		
+ 		
+       if(self::getRole()==true){
+		
+			self::$self_url = 'admin.php?page=' . __FUNCTION__;
+	
+			$action       = self::get_action();
+			$inventory_id = self::request( "inventory_id" );
+			
+	
+			// Do our work here
+			if ( $action == 'save' ) {
+				if ( self::save_item() ) {
+					$action        = '';
+					self::$message = self::__( 'Inventory Item' ) . ' ' . self::__( 'saved successfully.' );
+				} else {
+					$action = 'edit';
+				}
+			} else if ( $action == 'delete' ) {
+				$inventory_id = self::request( 'delete_id' );
+				$success      = self::delete_item( $inventory_id );
+				$action       = '';
 			}
-		} else if ( $action == 'delete' ) {
-			$inventory_id = self::request( 'delete_id' );
-			$success      = self::delete_item( $inventory_id );
-			$action       = '';
-		}
-
-		// Do our display here
-		self::admin_heading( self::__( 'Manage Inventory Items' ) );
-
-		if ( $action == 'edit' || $action == 'add' ) {
-			self::edit_item( $inventory_id );
-		}
-
-		if ( ! $action ) {
-			self::list_reports_items();
-		}
-
-		self::admin_footer();
+	
+			// Do our display here
+			self::admin_heading( self::__( 'Manage Inventory Items' ) );
+	
+			if ( $action == 'edit' || $action == 'add' ) {
+				self::edit_item( $inventory_id );
+			}
+	
+			if ( ! $action ) {
+				self::list_reports_items();
+			}
+	
+			self::admin_footer();
+       }
+       
+       else{
+       	      echo "This page is not available";   
+           }
 	}        
 
 
@@ -2609,6 +2622,15 @@ final class WPIMAdmin extends WPIMCore {
 	 *
 	 * @return bool
 	 */
+	
+	public static function getGID(){
+		global $current_user;
+		global $wpdb;
+		$sirus=$current_user->user_login;
+		$gid = $wpdb->get_var( "SELECT gid FROM $wpdb->users where user_login='$sirus'" );
+		return $gid;
+	}
+	
 	public static function save_item() {
 
 		$inventory_slug = '';
@@ -2640,11 +2662,8 @@ final class WPIMAdmin extends WPIMCore {
 		}
 */
 		if ( ! self::$error ) {
-               global $current_user;
-                global $wpdb;
-                
-                $sirus=$current_user->user_login;
-                $gid = $wpdb->get_var( "SELECT gid FROM $wpdb->users where user_login='$sirus'" );
+			
+                $gid = self::getGID(); 
               // $message = "Frame model " . $f_model[0];
               //  echo "<script type='text/javascript'>alert('$message');</script>";
 			$data = array(
