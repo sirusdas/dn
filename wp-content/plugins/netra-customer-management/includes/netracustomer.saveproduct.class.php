@@ -8,7 +8,7 @@
  * @package NETRACustomer
  * @copyright 2016
  */
-require('C:\xampp\apps\wordpress\htdocs\wp-load.php');
+require('G:\Workspace\EclipsePhpNeon\dn\wp-load.php');
 //require_once "includes/netracustomer.class.php";
 include_once('netracustomer.db.class.php');
 

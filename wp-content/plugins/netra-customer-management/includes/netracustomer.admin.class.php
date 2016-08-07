@@ -417,7 +417,7 @@ final class NCMAdmin extends NCMCore {
                 $c=1;
 		?>
                 
-                <form method="post" action="<?php echo self::$self_url; ?>">
+                <form method="post" id="idForm" action="<?php echo self::$self_url; ?>">
 			<table class="form-table">
 				<tr>
 					<th><label for="invoice_no"><?php self::label( 'invoice_no' ); ?></label></th>
@@ -534,15 +534,15 @@ final class NCMAdmin extends NCMCore {
 					</tr>
 				<?php } ?>
 			</table>
-                    <div class="" id="newTable"></div>
-                    <input style="bottom: 55px; position: absolute;" type="button" onclick="my()" name="Add More" value="Add More" id="addMore" disabled>
+                    
+                    <input style="bottom: 55px; position: absolute;" type="button" onclick="my()" name="Add More" value="Add More" id="addMore" >
                     
 			<?php
 			do_action( 'ncm_edit_item', $inventory_id ); ?>
 			<input type="hidden" name="action" value="save"/>
 			<input type="hidden" name="inventory_item_id" value="<?php echo $inventory_id; ?>"/>
 			<?php wp_nonce_field( self::NONCE_ACTION, 'nonce' ); ?>
-                        <p class="submit" style="bottom: 0px; position: absolute;">
+                        <p class="submit" >
 				<a href="<?php echo self::$self_url; ?>" class="button"><?php self::_e( 'Cancel' ); ?></a>
 				<?php if ( self::check_permission( 'save_item', $inventory_id ) ) { ?>
 					<input type="submit" name="save" class="button button-primary"
@@ -550,6 +550,7 @@ final class NCMAdmin extends NCMCore {
 				<?php } ?>
 			</p>
 		</form>
+		<div class="" id="newTable"></div>
 
                         <?php $file= plugins_url( 'search/search.php' , dirname(__FILE__) ); 
                               $file2= plugins_url( 'search/searchBrand.php' , dirname(__FILE__) );
@@ -652,7 +653,11 @@ foreach ($productData as $pData){
 <form id='form<?php echo ''.$c ?>' method='post' >  
     <input type="hidden" id="iid<?php echo ''.$c; ?>" name="iid<?php echo ''.$c; ?>" value="<?php echo $pData->inventory_id; ?>"/>
     <table class='form-table<?php echo ''.$c ?>'>
-				<tbody>                        
+				<tbody>  
+								<tr>
+					<th><label for="category_id" > <?php self::label( 'category_id' ); ?></label></th>
+					<td><?php echo self::$category->subdropdown( $c,"category_id$c", $pData->category_id ); ?></td>
+				              </tr>                      
 									<tr>
 						<th>Product Name</th>
                                                 <td><div class="ui-widget"><input value="<?php echo $pData->p_name; ?>" class='regular-text onfocused' id='p_name<?php echo ''.$c ?>' name='p_name<?php echo ''.$c ?>'></div></td>
@@ -775,7 +780,7 @@ jQuery(document).ready(function() {
                         'p_bal'                       : jQuery('input[name=p_bal<?php echo ''.$c; ?>]').val(),
                         'p_duedate'                   : jQuery('input[name=p_duedate<?php echo ''.$c; ?>]').val(),
                         'p_details'                   : jQuery('input[name=p_details<?php echo ''.$c; ?>]').val(),
-			'category_id'                 : jQuery('#category_id').val()                     
+			'category_id'                 : jQuery('#category_id<?php echo ''.$c; ?>').val()                     
         };
 alert(jQuery('input[name=invoice_no<?php echo ''.$c; ?>]' ).val());
        // process the form

@@ -3,21 +3,31 @@ jQuery(function($) {
         dateFormat : 'yy-mm-dd'
     });
     $c=1;
-    	$('#vendor_name, #vendor_address').on("keyup", actionTo);
+/*    	$('#vendor_name, #vendor_address').on("keyup", actionTo);
 	function actionTo() {
 		   if($('#vendor_name').val().length > 0 && $('#vendor_address').val().length > 0) {
 			  $('#addMore').prop("disabled", false);
 		   }else {
 			  $('#addMore').prop("disabled", true);
 		   }
-	}
+	}*/ //this is commented because Add More will be by default enabled.
     //my code 
 
-$("#addMore").click(function(){
+	$("#addMore").click(function(){
     $c=$c+1;
         $("#newTable").append("<form id='form"+$c+"' method='post' > " +
+        		"<h3>Add a new Product</h3>"+
     "<table class='form-table"+$c+"'>"+
 				"<tbody>"+
+                          "<tr>"+                     
+				"<th><label for='category_id'> Category</label></th>"+
+				"<td><select id='category_id"+$c+"' name='category_id"+$c+"'>"+
+					"<option value=''>Select Category</option>"+
+					"<option value='1'>Frames</option>"+
+					"<option value='2'>Lens</option>"+
+					"</select>"+
+					"</td>"+
+			
 									"<tr>"+
 						"<th>Product Name</th>"+
 						"<td><input value='' class='regular-text onfocused' id='p_name"+$c+"' name='p_name"+$c+"'></td>"+
@@ -75,7 +85,7 @@ $("#addMore").click(function(){
 				
 					"<input type='submit' id='abc"+$c+"'  name='save' class='button button-primary' value='Save' />"+
 				
-			"</p>"+
+			"</p> </form>"+
                         
 
                             "<script>"+
@@ -172,81 +182,124 @@ $("#addMore").click(function(){
                                                         );                                          
     });
     
-
+	function load(){
+		$(".submit").hide();
+		newProduct();
+        my();
+	}
     
     
-    // process the form
-$('#form'+$c).submit(function(event) {
-        alert("i was called");
-        // get the form data
-        // there are many ways to get this data using jQuery (you can use the class or id also)
-        var formData = {
-			'i_no'                  : $('input[name=invoice_no]' ).val(),
-			'v_name'                 : $('input[name=vendor_name]' ).val(),
-                        'pdate'                       : $('input[name=pdate]' ).val(),
-			'v_address'              : $('input[name=vendor_address]' ).val(),
-			'p_name'                      : $('input[name=p_name'+$c+']' ).val(),
-                        'p_model_no'                  : $('input[name=p_model_no'+$c+']').val(),
-                        'p_qty'                       : $('input[name=p_qty'+$c+']').val(),
-                        'p_rate'                      : $('input[name=p_rate'+$c+']').val(),
-                        'p_total'                     : $('input[name=p_total'+$c+']').val(),
-                        'p_adv'                       : $('input[name=p_adv'+$c+']').val(),                        
-                        'p_bal'                       : $('input[name=p_bal'+$c+']').val(),
-                        'p_duedate'                   : $('input[name=p_duedate'+$c+']').val(),
-                        'p_details'                   : $('input[name=p_details'+$c+']').val(),
-			'category_id'                 : $('input[name=category_id]' ).val()                     
-        };
-
-       // process the form
-$.ajax({
-    type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
-    url         : 'process.php', // the url where we want to POST
-    data        : formData, // our data object
-    dataType    : 'json' // what type of data do we expect back from the server
-})
-    // using the done promise callback
-    .done(function(data) {
-
-        // log data to the console so we can see
-        console.log(data);
-
-        // here we will handle errors and validation messages
-        if ( ! data.success) {
-            
-            // handle errors for name ---------------
-            if (data.errors.name) {
-                $('#name-group').addClass('has-error'); // add the error class to show red input
-                $('#name-group').append('<div class="help-block">' + data.errors.name + '</div>'); // add the actual error message under our input
-            }
-
-            // handle errors for email ---------------
-            if (data.errors.email) {
-                $('#email-group').addClass('has-error'); // add the error class to show red input
-                $('#email-group').append('<div class="help-block">' + data.errors.email + '</div>'); // add the actual error message under our input
-            }
-
-            // handle errors for superhero alias ---------------
-            if (data.errors.superheroAlias) {
-                $('#superhero-group').addClass('has-error'); // add the error class to show red input
-                $('#superhero-group').append('<div class="help-block">' + data.errors.superheroAlias + '</div>'); // add the actual error message under our input
-            }
-
-        } else {
-
-            // ALL GOOD! just show the success message!
-            $('form').append('<div class="alert alert-success">' + data.message.Name + '</div>');
-
-            // usually after form submission, you'll want to redirect
-            // window.location = '/thank-you'; // redirect a user to another page
-            alert('success'); // for now we'll just alert the user
-
-        }
-
+    // process the Homeform
+$(document).ready(function(){
+	//$(".loader1").show();$(".loader2").show();$(".loader3").show();
+	$("#idForm").submit(function() {
+		var url = window.location.href;
+		var result = url.split('&');
+		var urlSplit = result[1]; 
+		var actionSplit = urlSplit.split('=');
+		if(actionSplit == "add"){
+			$(".submit").hide();
+		}
+		//alert( actionSplit[1] );
+		//alert(url);
+		//$(".submit").hide();
+		//$(".loader1").show();$(".loader2").show();$(".loader3").show();
+    	$.ajax({
+    		  type: "POST",
+    		  data: $("#idForm").serializeArray(),
+    		  url: $("#idForm").attr('action'),
+    		  success: function(data) {
+    				 // $(".loader3").hide();$(".loader2").hide();$(".loader1").hide();
+    				  //$("#msg").html("<h5>Message has been sent, Thank You !!!</h5>");
+    				 // $("#msg").delay(4000).fadeOut();
+    				 // $('#idForm')[0].reset();
+    				  //$("#idForm").find("input[type=text], textarea, input[type=email]").val("");  
+    			  //newProduct();
+    			       // my();
+    		  }
+    		});
+    	return false;
     });
+	
+	
+	//process the subform
+	$('#form'+$c).submit(function(event) {
+		    $(".submit").hide();
+	        alert("i was called");
+	        // get the form data
+	        // there are many ways to get this data using jQuery (you can use the class or id also)
+	        var formData = {
+				'i_no'                  : $('input[name=invoice_no]' ).val(),
+				'v_name'                 : $('input[name=vendor_name]' ).val(),
+	                        'pdate'                       : $('input[name=pdate]' ).val(),
+				'v_address'              : $('input[name=vendor_address]' ).val(),
+				'p_name'                      : $('input[name=p_name'+$c+']' ).val(),
+	                        'p_model_no'                  : $('input[name=p_model_no'+$c+']').val(),
+	                        'p_qty'                       : $('input[name=p_qty'+$c+']').val(),
+	                        'p_rate'                      : $('input[name=p_rate'+$c+']').val(),
+	                        'p_total'                     : $('input[name=p_total'+$c+']').val(),
+	                        'p_adv'                       : $('input[name=p_adv'+$c+']').val(),                        
+	                        'p_bal'                       : $('input[name=p_bal'+$c+']').val(),
+	                        'p_duedate'                   : $('input[name=p_duedate'+$c+']').val(),
+	                        'p_details'                   : $('input[name=p_details'+$c+']').val(),
+				'category_id'                 : $('input[name=category_id'+$c+']' ).val()                     
+	        };
 
-        // stop the form from submitting the normal way and refreshing the page
-        event.preventDefault();
-    });    
+	       // process the form
+	$.ajax({
+	    type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
+	    url         : '../wp-content/plugins/netra-customer-management/includes/netracustomer.saveproduct.class.php', // the url where we want to POST
+	    data        : formData, // our data object
+	    dataType    : 'json' // what type of data do we expect back from the server
+	})
+	    // using the done promise callback
+	    .done(function(data) {
+
+	        // log data to the console so we can see
+	        console.log(data);
+
+	        // here we will handle errors and validation messages
+	        if ( ! data.success) {
+	            
+	            // handle errors for name ---------------
+	            if (data.errors.name) {
+	                $('#name-group').addClass('has-error'); // add the error class to show red input
+	                $('#name-group').append('<div class="help-block">' + data.errors.name + '</div>'); // add the actual error message under our input
+	            }
+
+	            // handle errors for email ---------------
+	            if (data.errors.email) {
+	                $('#email-group').addClass('has-error'); // add the error class to show red input
+	                $('#email-group').append('<div class="help-block">' + data.errors.email + '</div>'); // add the actual error message under our input
+	            }
+
+	            // handle errors for superhero alias ---------------
+	            if (data.errors.superheroAlias) {
+	                $('#superhero-group').addClass('has-error'); // add the error class to show red input
+	                $('#superhero-group').append('<div class="help-block">' + data.errors.superheroAlias + '</div>'); // add the actual error message under our input
+	            }
+
+	        } else {
+	        	newProduct();
+	        	       my();
+	            // ALL GOOD! just show the success message!
+	            $('form').append('<div class="alert alert-success">' + data.message.Name + '</div>');
+
+	            // usually after form submission, you'll want to redirect
+	            // window.location = '/thank-you'; // redirect a user to another page
+	            alert('success'); // for now we'll just alert the user
+
+	        }
+
+	    });
+
+	        // stop the form from submitting the normal way and refreshing the page
+	        event.preventDefault();
+	    }); 
+	
+});
+
+   
     
     
 	/**

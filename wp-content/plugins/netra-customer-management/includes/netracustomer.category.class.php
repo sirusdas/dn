@@ -168,4 +168,22 @@ class NCMCategory extends NCMDB {
 		$select.= '</select>' . PHP_EOL;
 		return $select;
 	}
+	
+	//subForm DropDown
+	
+	public function subdropdown($id,$name, $selected, $class = '') {
+		$categories = $this->get_all();
+		$select = '<select id="category_id' . $id . '" name="' . $name . '"';
+		$select.= ($class) ? ' class="' . $class . '"' : '';
+		$select.= '>' . PHP_EOL;
+		$select.= '<option value="">' . $this->__('Select Category') . '</option>' . PHP_EOL;
+		foreach($categories AS $category) {
+			$select.= '<option value="' . $category->category_id . '"';
+			$select.= ($category->category_id == $selected) ? ' selected' : '';
+			$select.= '>' . $category->category_name . '</option>' . PHP_EOL;
+		}
+		$select.= '</select>' . PHP_EOL;
+		return $select;
+	}
+	
 }

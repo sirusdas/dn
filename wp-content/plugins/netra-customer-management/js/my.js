@@ -44,7 +44,7 @@ $("#form"+$c).submit(function(event) {
                         'p_bal'                       : $('input[name=p_bal'+$c+']').val(),
                         'p_duedate'                   : $('input[name=p_duedate'+$c+']').val(),
                         'p_details'                   : $('input[name=p_details'+$c+']').val(),
-			'category_id'                 : $('#category_id').val()                     
+			'category_id'                 : $('#category_id'+$c+']').val()                     
         };
 		
 alert($('input[name=invoice_no'+$c+']' ).val());
